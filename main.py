@@ -80,7 +80,7 @@ if __name__ == "__main__":
     
     try:
         # Me conecto a internet
-        ip = connect_to("claudia", "paloma27")
+        ip = connect_to("Telecentro-5448", "GDMMDZ5ATZDZ")
         # Muestro la direccion de IP
         print("Microdot corriendo en IP/Puerto: " + ip + ":5000")
         # Inicio la aplicacion
