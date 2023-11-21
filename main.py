@@ -1,3 +1,9 @@
+### Hecho en ESP32 ###
+
+from machine import ADC, Pin
+
+adc = ADC(Pin(39)) # Pin D13
+
 def connect_to(ssid, passwd):
     """
         Conecta el microcontrolador a la red WIFI
@@ -37,7 +43,7 @@ def index(request):
     
     returns (File): Retorna un archivo HTML
     """
-    return send_file("index.html")
+    return send_file("/termometro/index.html")
 
 
 @app.route("/assets/<dir>/<file>")
@@ -51,7 +57,7 @@ def assets(request, dir, file):
     
     returns (File): Retorna un archivo CSS o JS
     """
-    return send_file("/assets/" + dir + "/" + file)
+    return send_file("/termometro/assets/" + dir + "/" + file)
 
 @app.route("/data/update")
 def data_update(request):
@@ -62,16 +68,13 @@ def data_update(request):
     
     returns (dict): Retorna un diccionario con los datos leidos
     """
-    # Importo ADC para lectura analogica
-    from machine import ADC
-    # Creo una instancia asociada al sensor de temperatura interno
-    sensor_temp = ADC(4)
-    # Leo el dato del sensor y ajusto para obtener la tension
-    lectura = sensor_temp.read_u16() * 3.3 / (1 << 16)
-    # Ajusto para leer la temperatura (Seccion 3.3 de Raspberry Pi Pico Python SDK)
-    temperatura_cpu = 27 - (lectura - 0.706) / 0.001721
-    # Retorno el diccionario
-    return { "cpu_temp" : temperatura_cpu }
+    global adc
+    
+    val_temp = adc.read_u16() # Obtengo la lectura en un rango de 0 a 65535
+
+    print(val_temp)
+    
+    return { "lm35_temp" : val_temp } # Devuelvo el valor dentro de un diccionario
     
 
 
@@ -80,7 +83,7 @@ if __name__ == "__main__":
     
     try:
         # Me conecto a internet
-        ip = connect_to("Telecentro-5448", "GDMMDZ5ATZDZ")
+        ip = connect_to("Red Alumnos", "")
         # Muestro la direccion de IP
         print("Microdot corriendo en IP/Puerto: " + ip + ":5000")
         # Inicio la aplicacion
@@ -89,3 +92,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         # Termina el programa con Ctrl + C
         print("Aplicacion terminada")
+

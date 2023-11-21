@@ -4,8 +4,8 @@ const units = {
 };
 
 const config = {
-	minTemp: -20,
-	maxTemp: 50,
+	minTemp: 2,
+	maxTemp: 30,
 	unit: "Celcius"
 };
 
@@ -38,7 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(response => response.json())
         .then(data => {
             // Guardo el valor de temperatura en la variable temp
-            const temp = data.cpu_temp;
+            const unconvertedTemp = ((data.lm35_temp * 1.1) / 65536) / 0.01; // Convierto el valor raw en voltaje y después temperatura
+            const temp = Math.round(unconvertedTemp * 10) / 10 // Redondeo para tener un solo decimal 
             // Asigno el valor de temperatura al termometro
             temperature.style.height = (temp - config.minTemp) / (config.maxTemp - config.minTemp) * 100 + "%";
             temperature.dataset.value = temp + units[config.unit];
